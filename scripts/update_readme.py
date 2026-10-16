@@ -4,7 +4,7 @@
 Blocks (between <!-- AUTO:NAME:START --> and <!-- AUTO:NAME:END -->):
   CONTRIB    inline text in the [!NOTE]: this year's contribution total and private share
   YEARLY     table of contributions per year (totals only)
-  COMMITTERS committers.top Turkiye badge, empty while the account is unranked
+  COMMITTERS committers.top Turkiye and worldwide rank badges, each shown only while ranked
   UPDATED    date of the last successful refresh
 
 Numbers are only accepted when they pass sanity guards (see check_year). A block that cannot be
@@ -36,12 +36,15 @@ except ImportError:  # pragma: no cover
 ROOT = Path(__file__).resolve().parent.parent
 README = ROOT / 'README.md'
 STATS = ROOT / 'data' / 'stats.json'
-BADGE_FILE = ROOT / 'assets' / 'generated' / 'committers-turkey.svg'
 LOGIN = os.environ.get('PROFILE_LOGIN', 'Tugaytalha')
 FIRST_YEAR = 2024
 RAW = f'https://raw.githubusercontent.com/{LOGIN}/{LOGIN}/main'
-BADGE_URL = f'https://user-badge.committers.top/turkey_private/{LOGIN}.svg'
 UA = f'{LOGIN}-profile-readme'
+# committers.top lists (public + private contributions): (preset, local file stem, phrase for the alt text)
+COMMITTERS_BADGES = [
+    ('turkey_private', 'committers-turkey', 'in Türkiye'),
+    ('worldwide_private', 'committers-worldwide', 'worldwide'),
+]
 
 QUERY = """query($login: String!, $from: DateTime!, $to: DateTime!) { user(login: $login) {
   contributionsCollection(from: $from, to: $to) {
@@ -147,25 +150,42 @@ def yearly_table(years: dict, now: datetime) -> str:
     return '\n'.join(rows)
 
 
-def committers_block() -> tuple[str, bool]:
-    """(block text, refreshed). Empty block while unranked; unchanged on anything unexpected."""
-    req = urllib.request.Request(BADGE_URL, headers={'User-Agent': UA})
+def fetch_committers_badge(preset: str) -> tuple[str, int | None]:
+    """(svg, rank) for one committers.top list; rank is None while unranked. Raises on anything unexpected
+    (the service answers 200 even for unknown users, so the label is what we trust, not the status)."""
+    req = urllib.request.Request(f'https://user-badge.committers.top/{preset}/{LOGIN}.svg', headers={'User-Agent': UA})
     with urllib.request.urlopen(req, timeout=20) as resp:
         svg = resp.read().decode('utf-8', 'replace')
     label = re.search(r'aria-label="([^"]*)"', svg) or re.search(r'<title>([^<]*)</title>', svg)
     label = label.group(1) if label else ''
     if 'committers.top' not in label.lower():
-        raise RuntimeError(f'unexpected badge label: {label!r}')
+        raise RuntimeError(f'unexpected {preset} badge label: {label!r}')
     if 'unranked' in label.lower():
-        return '', True
+        return svg, None
     m = re.search(r'#\s*(\d+)', label)
     if not m:
-        raise RuntimeError(f'cannot read rank from label: {label!r}')
-    BADGE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    BADGE_FILE.write_text(svg, encoding='utf-8', newline='\n')
-    alt = f'committers.top: #{m.group(1)} in Türkiye (public and private contributions)'
-    return (f'<a href="https://committers.top/turkey_private"><img height="20" alt="{alt}" '
-            f'src="{RAW}/assets/generated/committers-turkey.svg"></a>'), True
+        raise RuntimeError(f'cannot read rank from {preset} label: {label!r}')
+    return svg, int(m.group(1))
+
+
+def committers_block(write: bool = True) -> tuple[str, list[str]]:
+    """(block text, status lines). A badge appears only for lists where the account is ranked, so an
+    'unranked' badge is never shown. If any fetch fails the caller keeps yesterday's block."""
+    badges, status = [], []
+    for preset, stem, where in COMMITTERS_BADGES:
+        svg, rank = fetch_committers_badge(preset)
+        if rank is None:
+            status.append(f'{preset}: unranked (hidden)')
+            continue
+        status.append(f'{preset}: #{rank} (shown)')
+        if write:
+            path = ROOT / 'assets' / 'generated' / f'{stem}.svg'
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(svg, encoding='utf-8', newline='\n')
+        alt = f'committers.top: #{rank} {where} (public and private contributions)'
+        badges.append(f'<a href="https://committers.top/{preset}"><img height="20" alt="{alt}" '
+                      f'src="{RAW}/assets/generated/{stem}.svg"></a>')
+    return ' '.join(badges), status
 
 
 # ---------------------------------------------------------------- main
@@ -214,9 +234,9 @@ def main() -> int:
         warn(f'CONTRIB/YEARLY not refreshed: {exc}')
         stats_ok = False
     try:
-        body, ok = committers_block()
+        body, status = committers_block(write=not args.dry_run)
         text = replace_block(text, 'COMMITTERS', body, inline=True)
-        print(f"committers.top: {'hidden (unranked)' if not body else 'ranked, badge shown'}")
+        print('committers.top: ' + '; '.join(status))
     except Exception as exc:
         warn(f'COMMITTERS left unchanged: {exc}')
     if stats_ok and 'numbers' in refreshed:
