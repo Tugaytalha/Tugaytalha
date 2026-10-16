@@ -7,14 +7,14 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Tugaytalha/Tugaytalha/main/assets/banner-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Tugaytalha/Tugaytalha/main/assets/banner-light.svg">
-  <img width="100%" alt="Tugay Talha İçen, Data Scientist at AlbarakaTech. Self-hosted LLM systems: serving, retrieval, agents and voice. Illustration: an audio waveform turning into the tokens of the Turkish phrase 'merhaba dünya'." src="https://raw.githubusercontent.com/Tugaytalha/Tugaytalha/main/assets/banner-light.svg">
+  <img width="100%" alt="Tugay Talha İçen, AI Engineer at AlbarakaTech. Self-hosted LLM systems: serving, retrieval, agents and voice. Illustration: an audio waveform turning into the tokens of the Turkish phrase 'merhaba dünya'." src="https://raw.githubusercontent.com/Tugaytalha/Tugaytalha/main/assets/banner-light.svg">
 </picture>
 
 **I build self-hosted LLM systems end to end: GPU sizing and serving, retrieval, agents and voice.**
 
 I like the part of AI work that happens after the demo: checking that a model fits on the GPUs you actually have, measuring how it behaves under load, and connecting it to retrieval, tools and speech so people can use it. Much of what I build is Turkish-first and runs on local or self-hosted models.
 
-- **Day job:** Data Scientist at AlbarakaTech, building on-prem LLM and RAG systems for banking.
+- **Day job:** AI Engineer at AlbarakaTech, building on-prem LLM and RAG systems for banking.
 - **Focus in 2026:** vLLM capacity planning, MCP tooling for teams, and evaluation loops for agents.
 - **Previously:** Huawei Cloud intern (summer 2024). B.Sc. in Computer Engineering, Gebze Technical University (2025).
 
