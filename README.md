@@ -14,7 +14,7 @@
 
 I like the part of AI work that happens after the demo: checking that a model fits on the GPUs you actually have, measuring how it behaves under load, and connecting it to retrieval, tools and speech so people can use it. Much of what I build is Turkish-first and runs on local or self-hosted models.
 
-- **Day job:** AI Engineer at AlbarakaTech, building on-prem LLM and RAG systems for banking.
+- **Day job:** AI Engineer at AlbarakaTech. I work directly with business teams as customers, turn their needs into on-prem LLM and RAG platforms for banking, deliver them end to end and refine them with their feedback.
 - **Focus in 2026:** vLLM capacity planning, MCP tooling for teams, and evaluation loops for agents.
 - **Previously:** Huawei Cloud intern (summer 2024). B.Sc. in Computer Engineering, Gebze Technical University (2025).
 
