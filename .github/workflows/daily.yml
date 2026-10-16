@@ -1,0 +1,121 @@
+name: daily-refresh
+
+on:
+  schedule:
+    - cron: '17 21 * * *'   # 00:17 Europe/Istanbul (UTC+3 all year)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'data/**'
+      - '.github/3d-contrib.json'
+      - '.github/workflows/daily.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out profile repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: README numbers (contribution note, yearly table, committers.top, refresh date)
+        id: numbers
+        continue-on-error: true
+        env:
+          GH_READ_TOKEN: ${{ secrets.PROFILE_READ_TOKEN || secrets.GITHUB_TOKEN }}
+          TOKEN_SOURCE: ${{ secrets.PROFILE_READ_TOKEN != '' && 'PROFILE_READ_TOKEN' || 'GITHUB_TOKEN' }}
+        run: python3 -B scripts/update_readme.py
+
+      - name: 3D contribution calendar (dark and light)
+        id: cal3d
+        continue-on-error: true
+        uses: yoshi389111/github-profile-3d-contrib@7d95e7d4cdc028dd1e1cbd957d65f35efb12ae39 # v0.9.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME: ${{ github.repository_owner }}
+          SETTING_JSON: .github/3d-contrib.json
+
+      - name: Trim public-only counters from the 3D calendar
+        id: trim3d
+        if: steps.cal3d.outcome == 'success'
+        continue-on-error: true
+        run: python3 -B scripts/trim_3d.py
+
+      - name: Check out puzzle solver (pinned commit)
+        id: solver
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Tugaytalha/Wooden-Calendar-Puzzle-Solver
+          ref: 93bb496da3d350257e986e2c41465e2e28849f58
+          path: .solver
+          persist-credentials: false
+
+      - name: Solve today's date and draw the board
+        id: puzzle
+        if: steps.solver.outcome == 'success'
+        continue-on-error: true
+        run: python3 -B scripts/render_puzzle.py --solver .solver --out assets/generated --tz Europe/Istanbul
+
+      - name: Stats card (dark)
+        id: stats_dark
+        continue-on-error: true
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
+        with:
+          card: stats
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&hide_rank=true&hide=stars&bg_color=0d1117&title_color=a78bfa&text_color=e6edf3&icon_color=22d3ee
+          path: assets/generated/stats-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Stats card (light)
+        id: stats_light
+        continue-on-error: true
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
+        with:
+          card: stats
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&hide_rank=true&hide=stars&bg_color=ffffff&title_color=7c3aed&text_color=1f2328&icon_color=0891b2
+          path: assets/generated/stats-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Commit and push changed files
+        if: always()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for p in README.md data assets/generated profile-3d-contrib; do
+            if [ -e "$p" ]; then git add -A -- "$p"; fi
+          done
+          git diff --cached --quiet && { echo 'Nothing to commit'; exit 0; }
+          git commit -m 'chore: daily refresh' || exit 0
+          git pull --rebase --autostash origin main
+          git push
+
+      - name: Fail the run if any generator failed
+        if: always()
+        env:
+          OUTCOMES: >-
+            numbers=${{ steps.numbers.outcome }}
+            cal3d=${{ steps.cal3d.outcome }}
+            trim3d=${{ steps.trim3d.outcome }}
+            solver=${{ steps.solver.outcome }}
+            puzzle=${{ steps.puzzle.outcome }}
+            stats_dark=${{ steps.stats_dark.outcome }}
+            stats_light=${{ steps.stats_light.outcome }}
+        run: |
+          # Outputs that succeeded were committed above; this step only makes the run red so GitHub emails you.
+          echo "$OUTCOMES"
+          if echo "$OUTCOMES" | grep -q '=failure'; then
+            echo '::error::at least one generator failed; see the step list above'
+            exit 1
+          fi

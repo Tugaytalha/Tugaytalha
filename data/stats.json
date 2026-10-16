@@ -1,0 +1,16 @@
+{
+  "years": {
+    "2024": {
+      "restricted": 30,
+      "total": 345
+    },
+    "2025": {
+      "restricted": 430,
+      "total": 773
+    },
+    "2026": {
+      "restricted": 1161,
+      "total": 1448
+    }
+  }
+}
