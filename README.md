@@ -22,7 +22,7 @@ I like the part of AI work that happens after the demo: checking that a model fi
 🥇 1st in the "A World Away: Hunting for Exoplanets with AI" challenge, 4th overall: [NASA Space Apps Challenge 2025 Istanbul](https://www.spaceappschallenge.org/2025/find-a-team/svoria/)
 
 > [!NOTE]
-> Much of my work happens in private repositories, so the public repos below show only part of it. <!-- AUTO:CONTRIB:START -->In 2026 so far: **1,798** contributions, **81%** of them in private repositories.<!-- AUTO:CONTRIB:END -->
+> Much of my work happens in private repositories, so the public repos below show only part of it. <!-- AUTO:CONTRIB:START -->In 2026 so far: **1,798** contributions, **90%** of them in private repositories.<!-- AUTO:CONTRIB:END -->
 
 ## Featured projects
 
@@ -172,7 +172,7 @@ flowchart LR
 
 | Year | Contributions |
 | :-- | --: |
-| 2026 (to 29 Oct) | 1,798 |
+| 2026 (to 30 Oct) | 1,798 |
 | 2025 | 773 |
 | 2024 | 345 |
 
@@ -218,4 +218,4 @@ Happy to talk about self-hosted LLM serving, Turkish-language RAG and voice agen
   <a href="https://medium.com/@mukoicen">Writing</a>
 </p>
 
-<p align="center"><sub>The banner, icons, calendar, stats and puzzle are files in this repo, refreshed by <a href="https://github.com/Tugaytalha/Tugaytalha/blob/main/.github/workflows/daily.yml">the daily workflow</a>. Last refresh: <!-- AUTO:UPDATED:START -->29 Oct 2026<!-- AUTO:UPDATED:END -->.</sub></p>
+<p align="center"><sub>The banner, icons, calendar, stats and puzzle are files in this repo, refreshed by <a href="https://github.com/Tugaytalha/Tugaytalha/blob/main/.github/workflows/daily.yml">the daily workflow</a>. Last refresh: <!-- AUTO:UPDATED:START -->30 Oct 2026<!-- AUTO:UPDATED:END -->.</sub></p>
