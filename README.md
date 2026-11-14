@@ -65,7 +65,7 @@ One catalog of a team's model deployments (vLLM LLMs, embedding and reranker mod
 <kbd>Agents &amp; tools</kbd>
 
 **[The-Builder](https://github.com/Tugaytalha/The-Builder)**<br>
-Our entry for the Freya × YC "Build the Builder" hackathon (2026): give it a bank's brief and tool API, and it builds a working Freya phone agent with the Claude Agent SDK. My part: the persona-simulation evaluation harness (LLM and scripted callers, LLM judge) and the final-case test runs. The pass rate went from 6/50 to 27/50 between builds. Built with [@resitaydin](https://github.com/resitaydin).
+Our entry for the Freya × YC "Build the Builder" hackathon (2026): give it a bank's brief and tool API, and it builds a working Freya phone agent with the Claude Agent SDK. My part: the persona-simulation evaluation harness (LLM and scripted callers, LLM judge) and the final-case test runs. The pass rate went from 17/50 to 27/50 (34% to 54%) between builds. Built with [@resitaydin](https://github.com/resitaydin).
 
 <sub>Python · Claude Agent SDK · pytest</sub>
 
