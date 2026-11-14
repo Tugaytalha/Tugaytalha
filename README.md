@@ -124,6 +124,8 @@ flowchart LR
 
 | Project | What it is |
 | :-- | :-- |
+| [Local RAG](https://github.com/Tugaytalha/Local_RAG_Application) | Turkish-first question answering over your own documents on local models: swappable embedding models compared on the same question set, multi-query retrieval, HyDE-style query augmentation and UMAP plots of what was retrieved. LangChain, ChromaDB, Ollama, Gradio. |
+| [Text-to-SQL with local RAG](https://github.com/Tugaytalha/Text-to-SQL-with-local-RAG) | Built on [Vanna](https://github.com/vanna-ai/vanna): a local SQLCoder model via Ollama, schema loaded from a column catalogue with business descriptions, LLM column suggestions before DDL retrieval, and multilingual rerankers. Streamlit. |
 | Exoplanet explorer | NASA Space Apps Challenge 2025 with team Svoria: a Kepler KOI disposition classifier (XGBoost, AutoML) with a Gemini + FAISS question-answering endpoint, served with FastAPI. |
 | Solar production forecasting (Sun-Farm) | Huawei R&D Coding Marathon 2024 finalist, built with [@umit-sen](https://github.com/umit-sen) and Oğuzhan Kaya: irradiation and energy-output forecasts for a location, with a 30-year production and payback estimate. H2O AutoML, XGBoost, Flask, Docker. |
 | MosaicMind | Team project: federated learning (FedAvg in C++/LibTorch) and image captioning across Raspberry Pi nodes, with web and Flutter clients. My part: the federated-learning component and the web dashboard. |
